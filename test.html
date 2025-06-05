@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneaker'Shop - Boutique de Chaussures Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --accent: #ff6b6b;
+            --text: #333;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            min-width: 180px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            margin-top: 5px;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg);
+            color: var(--accent);
+            padding-left: 2rem;
+        }
+
+        .dropdown-content a:first-child {
+            border-radius: 10px 10px 0 0;
+        }
+
+        .dropdown-content a:last-child {
+            border-radius: 0 0 10px 10px;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Cart Dropdown */
+        .cart-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .cart-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(10px);
+        }
+
+        .cart-header {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .cart-items {
+            padding: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .cart-item-remove:hover {
+            color: var(--accent);
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .cart-footer {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            height: 90vh;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://redac.trashtalk.co/wp-content/uploads/2022/01/Air-Jordan-1-8.jpeg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Products Section */
+        .products {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            margin-bottom: 4rem;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .brand-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .add-to-cart:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .about-text p {
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        .about-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .about-list li {
+            padding: 0.5rem 0;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 5%;
+            background: var(--bg);
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .contact-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .contact-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-form h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--bg);
+            padding: 4rem 5%;
+            margin-top: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .brand-title {
+                font-size: 2rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">Sneaker'Shop</div>
+            <ul class="nav-links">
+                <li><a href="#home">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#products">Marques</a>
+                    <div class="dropdown-content">
+                        <a href="#nike">Nike</a>
+                        <a href="#jordan">Jordan</a>
+                        <a href="#adidas">Adidas</a>
+                        <a href="#newbalance">New Balance</a>
+                        <a href="#asics">Asics</a>
+                        <a href="#dior">Dior</a>
+                        <a href="#louisvuitton">Louis Vuitton</a>
+                        <a href="#balenciaga">Balenciaga</a>
+                    </div>
+                </li>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒
+                <span class="cart-count">0</span>
+                <div class="cart-dropdown" id="cartDropdown">
+                    <div class="cart-header">Mon Panier</div>
+                    <div class="cart-items" id="cartItems">
+                        <div class="cart-empty">Votre panier est vide</div>
+                    </div>
+                    <div class="cart-footer" style="display: none;">
+                        <div class="cart-total">
+                            <span>Total:</span>
+                            <span id="cartTotal">€0.00</span>
+                        </div>
+                        <button class="checkout-button">Passer la commande</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Authenticité & Style</h1>
+            <p>Les meilleures marques, les modèles les plus iconiques</p>
+            <button class="cta-button">Découvrir la Collection</button>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        
+        <!-- Nike Section -->
+        <div class="brand-section" id="nike">
+            <h2 class="brand-title">Nike</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop" alt="Nike Air Max" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Nike Air Max 90</h3>
+                        <p class="product-price">€149.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400&h=300&fit=crop" alt="Nike Dunk" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Nike Dunk Low</h3>
+                        <p class="product-price">€119.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop" alt="Nike Blazer" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Nike Blazer Mid</h3>
+                        <p class="product-price">€109.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jordan Section -->
+        <div class="brand-section" id="jordan">
+            <h2 class="brand-title">Jordan</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400&h=300&fit=crop" alt="Jordan 1" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Air Jordan 1 Retro</h3>
+                        <p class="product-price">€179.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=300&fit=crop" alt="Jordan 4" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Air Jordan 4</h3>
+                        <p class="product-price">€219.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1597045566677-8cf032ed6634?w=400&h=300&fit=crop" alt="Jordan 11" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Air Jordan 11</h3>
+                        <p class="product-price">€239.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adidas Section -->
+        <div class="brand-section" id="adidas">
+            <h2 class="brand-title">Adidas</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1620794341491-76be6eeb6946?w=400&h=300&fit=crop" alt="Adidas Stan Smith" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Stan Smith</h3>
+                        <p class="product-price">€99.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=400&h=300&fit=crop" alt="Adidas Superstar" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Superstar</h3>
+                        <p class="product-price">€109.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=400&h=300&fit=crop" alt="Adidas Ultra Boost" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Ultra Boost</h3>
+                        <p class="product-price">€189.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Balance Section -->
+        <div class="brand-section" id="newbalance">
+            <h2 class="brand-title">New Balance</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&h=300&fit=crop" alt="New Balance 550" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">New Balance 550</h3>
+                        <p class="product-price">€139.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop" alt="New Balance 990" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">New Balance 990v5</h3>
+                        <p class="product-price">€219.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1584735175097-719d848f8449?w=400&h=300&fit=crop" alt="New Balance 2002R" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">New Balance 2002R</h3>
+                        <p class="product-price">€159.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asics Section -->
+        <div class="brand-section" id="asics">
+            <h2 class="brand-title">Asics</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop" alt="Asics Gel-Lyte III" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Gel-Lyte III</h3>
+                        <p class="product-price">€129.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop" alt="Asics Gel-Kayano" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Gel-Kayano 14</h3>
+                        <p class="product-price">€169.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop" alt="Asics Gel-1090" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Gel-1090</h3>
+                        <p class="product-price">€119.99</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dior Section -->
+        <div class="brand-section" id="dior">
+            <h2 class="brand-title">Dior</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=400&h=300&fit=crop" alt="Dior B23" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Dior B23 High-Top</h3>
+                        <p class="product-price">€990.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop" alt="Dior B22" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Dior B22 Sneaker</h3>
+                        <p class="product-price">€1,090.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=300&fit=crop" alt="Dior B27" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Dior B27 Low</h3>
+                        <p class="product-price">€890.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Louis Vuitton Section -->
+        <div class="brand-section" id="louisvuitton">
+            <h2 class="brand-title">Louis Vuitton</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=300&fit=crop" alt="LV Trainer" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">LV Trainer</h3>
+                        <p class="product-price">€1,190.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400&h=300&fit=crop" alt="LV Archlight" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">LV Archlight</h3>
+                        <p class="product-price">€1,090.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=300&fit=crop" alt="LV Run Away" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Run Away Pulse</h3>
+                        <p class="product-price">€890.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Balenciaga Section -->
+        <div class="brand-section" id="balenciaga">
+            <h2 class="brand-title">Balenciaga</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop" alt="Balenciaga Triple S" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Triple S</h3>
+                        <p class="product-price">€895.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1578986175247-7d60c6df07c5?w=400&h=300&fit=crop" alt="Balenciaga Track" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Track Sneaker</h3>
+                        <p class="product-price">€795.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=300&fit=crop" alt="Balenciaga Speed" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Speed Trainer</h3>
+                        <p class="product-price">€695.00</p>
+                        <button class="add-to-cart" onclick="addToCart()">Ajouter au Panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <h2 class="section-title">À Propos de Sneaker'Shop</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Notre Histoire</h3>
+                    <p>Fondée en 2020, Sneaker'Shop est née de la passion pour les sneakers et la culture streetwear. Notre mission est de rendre accessibles les modèles les plus iconiques et les éditions limitées aux passionnés du monde entier.</p>
+                    
+                    <h3>Notre Engagement</h3>
+                    <p>Nous nous engageons à fournir uniquement des produits 100% authentiques, vérifiés par nos experts. Chaque paire est inspectée minutieusement pour garantir son authenticité et sa qualité.</p>
+                    
+                    <h3>Pourquoi Nous Choisir ?</h3>
+                    <ul class="about-list">
+                        <li>✓ Plus de 5000 clients satisfaits</li>
+                        <li>✓ Partenariats officiels avec les grandes marques</li>
+                        <li>✓ Service client disponible 7j/7</li>
+                        <li>✓ Garantie d'authenticité à vie</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=600&h=400&fit=crop" alt="Sneaker Collection">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">Contactez-Nous</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Nos Coordonnées</h3>
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <div>
+                            <h4>Adresse</h4>
+                            <p>123 Avenue des Champs-Élysées<br>75008 Paris, France</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <div>
+                            <h4>Téléphone</h4>
+                            <p>+33 1 23 45 67 89</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <div>
+                            <h4>Email</h4>
+                            <p>contact@sneakershop.fr</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🕐</span>
+                        <div>
+                            <h4>Horaires</h4>
+                            <p>Lun-Ven: 9h00 - 19h00<br>Sam: 10h00 - 18h00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Envoyez-nous un Message</h3>
+                    <form onsubmit="handleSubmit(event)">
+                        <div class="form-group">
+                            <input type="text" placeholder="Votre Nom" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Votre Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Sujet">
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Votre Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">Envoyer le Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">✓</div>
+                <h3 class="feature-title">100% Authentique</h3>
+                <p>Tous nos produits sont authentifiés et garantis originaux</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3 class="feature-title">Livraison Express</h3>
+                <p>Livraison en 24-48h pour toute commande passée avant 14h</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">↩️</div>
+                <h3 class="feature-title">Retours Gratuits</h3>
+                <p>30 jours pour changer d'avis, retours gratuits</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Paiement Sécurisé</h3>
+                <p>Transactions 100% sécurisées avec cryptage SSL</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>Sneaker'Shop</h3>
+            <p>© 2025 Sneaker'Shop. Tous droits réservés.</p>
+            <p>Spécialiste des sneakers de luxe et éditions limitées</p>
+            <div class="social-links">
+                <a href="#">📘</a>
+                <a href="#">📷</a>
+                <a href="#">🐦</a>
+                <a href="#">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cartCount = 0;
+        let cartItems = [];
+        let cartTotal = 0;
+        
+        function toggleCart() {
+            const dropdown = document.getElementById('cartDropdown');
+            dropdown.classList.toggle('active');
+        }
+        
+        // Fermer le panier si on clique ailleurs
+        document.addEventListener('click', (e) => {
+            const cartIcon = document.querySelector('.cart-icon');
+            const dropdown = document.getElementById('cartDropdown');
+            
+            if (!cartIcon.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        function addToCart(name, price, image) {
+            // Obtenir les infos du produit depuis le bouton cliqué
+            const card = event.target.closest('.product-card');
+            const productName = name || card.querySelector('.product-name').textContent;
+            const productPrice = price || card.querySelector('.product-price').textContent;
+            const productImage = image || card.querySelector('.product-image').src;
+            const priceNumber = parseFloat(productPrice.replace('€', '').replace(',', ''));
+            
+            // Ajouter au panier
+            cartItems.push({
+                id: Date.now(),
+                name: productName,
+                price: priceNumber,
+                image: productImage
+            });
+            
+            cartCount++;
+            cartTotal += priceNumber;
+            
+            updateCartUI();
+            
+            // Animation du bouton
+            event.target.textContent = '✓ Ajouté!';
+            event.target.style.background = '#4CAF50';
+            
+            setTimeout(() => {
+                event.target.textContent = 'Ajouter au Panier';
+                event.target.style.background = '';
+            }, 1500);
+        }
+        
+        function removeFromCart(id) {
+            const index = cartItems.findIndex(item => item.id === id);
+            if (index > -1) {
+                cartTotal -= cartItems[index].price;
+                cartItems.splice(index, 1);
+                cartCount--;
+                updateCartUI();
+            }
+        }
+        
+        function updateCartUI() {
+            const cartCountEl = document.querySelector('.cart-count');
+            const cartItemsEl = document.getElementById('cartItems');
+            const cartTotalEl = document.getElementById('cartTotal');
+            const cartFooter = document.querySelector('.cart-footer');
+            
+            cartCountEl.textContent = cartCount;
+            
+            if (cartItems.length === 0) {
+                cartItemsEl.innerHTML = '<div class="cart-empty">Votre panier est vide</div>';
+                cartFooter.style.display = 'none';
+            } else {
+                cartItemsEl.innerHTML = cartItems.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">€${item.price.toFixed(2)}</div>
+                        </div>
+                        <button class="cart-item-remove" onclick="removeFromCart(${item.id})">×</button>
+                    </div>
+                `).join('');
+                
+                cartTotalEl.textContent = `€${cartTotal.toFixed(2)}`;
+                cartFooter.style.display = 'block';
+            }
+        }
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Header animation on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const header = document.querySelector('header');
+            
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.15)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+        
+        // CTA button click
+        document.querySelector('.cta-button').addEventListener('click', () => {
+            document.querySelector('#products').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+        
+        // Checkout button
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('checkout-button')) {
+                alert('Merci pour votre commande! (Fonctionnalité de démonstration)');
+            }
+        });
+        
+        // Handle contact form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('Merci pour votre message! Nous vous répondrons dans les plus brefs délais.');
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>
